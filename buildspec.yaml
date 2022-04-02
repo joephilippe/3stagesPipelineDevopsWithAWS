@@ -1,0 +1,36 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+  pre_build:
+    commands:
+      - echo a lot to do in the pre_build phase...
+      - echo validating aws  or check if aws cli is installed
+      - aws --version
+      - echo validating python
+      - python3 --version
+      - echo validating the python package manager exists
+      - pip3 --version
+      - echo installing cfn-lint
+      - pip3 install cfn-lint
+      - echo ckecking cfn-lint version
+      - cfn-lint --version
+     
+  build:
+    commands:
+      - echo validating the cfn template 
+      - cfn-lint baseInfra2022.yml
+      - echo Build started on `date`
+      
+      - echo building our cfn or cloudformation template 
+      - aws cloudformation package --template-file  baseInfra2022.yml  --s3-bucket my-deployed-artifacts-bucket29 --output-template-file output-template.yaml
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo " Merci POUR CE BIG DEPLOYMENT OF MY CF TEMPLATE INTO THE DEPLOY TEST in our DEPLOY PHASE"
+artifacts:
+  files:
+    - output-template.yaml  # zipped in our artifact
+    - baseInfra2022.yml
